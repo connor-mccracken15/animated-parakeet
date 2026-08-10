@@ -20,7 +20,7 @@ def load_gpu(index):
 
     # Run test - throws error if any issues
     try:
-        x = torch.randn(1000, 1000, device=torch.device("cuda"))
+        torch.randn(1000, 1000, device=torch.device("cuda"))
     except:
         print("Unable to run tensor test - check GPU.")
 
@@ -36,7 +36,7 @@ def run_trackastra_test(device):
     ctc_tracks, ctc_masks = graph_to_ctc(
         track_graph,
         masks_tracked,
-        outdir="~/scratch/output",
+        outdir="/scratch/output",
     )
 
 def main():
