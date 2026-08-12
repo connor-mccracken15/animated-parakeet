@@ -2,6 +2,7 @@ import os
 import torch
 import numpy as np
 import tifffile
+from pathlib import Path
 
 from trackastra.model import Trackastra
 from trackastra.tracking import graph_to_ctc
@@ -20,32 +21,42 @@ def load_gpu(index):
 
     return "cuda"
 
-def run_trackastra_test(device, input_dir, dataset, output_dir):    
+def run_trackastra_test(device, in_path, dataset, out_path):
 
-    img_dir = os.path(dataset, input_dir, "01")
-    mask_dir = os.path(dataset, input_dir, "01_GT", "SEG")
+    img_dir  = Path(in_path).expanduser() / dataset / "01"
+    mask_dir = Path(in_path).expanduser() / dataset / "01_GT" / "SEG"
 
-    if not (os.path.exists(img_dir) and os.path.exists(mask_dir)):
-        raise RuntimeError("Datasets could not be found.")
+    print(f"img_dir: {img_dir}\nmask_dir: {mask_dir}")
 
-    output_dir = os.path(output_dir, dataset)
+    if not (img_dir.exists() and mask_dir.exists()):
+        raise FileNotFoundError("Dataset folders could not be found.")
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    out_dir = Path(out_path).expanduser() / dataset
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-    imgs  = np.stack([tifffile.imread(f) for f in sorted(img_dir.glob("*.tif"))])
-    masks = np.stack([tifffile.imread(f) for f in sorted(mask_dir.glob("*.tif"))])
+    print(f"output_dir: {out_dir}")
+
+    img_files = sorted(img_dir.glob("*.tif"))
+    mask_files = sorted(mask_dir.glob("*.tif"))
+
+    if not (img_files and mask_files):
+        raise FileNotFoundError("Image or mask .tif files could not be found.")
+
+    imgs  = np.stack([tifffile.imread(f) for f in img_files])
+    masks = np.stack([tifffile.imread(f) for f in mask_files])
 
     model = Trackastra.from_pretrained("ctc", device=device)
 
+    print("Starting tracking...")
+
     track_graph, masks_tracked = model.track(imgs, masks, mode="greedy")
 
-    ctc_tracks, ctc_masks = graph_to_ctc(track_graph, masks_tracked, outdir=output_dir)
+    ctc_tracks, ctc_masks = graph_to_ctc(track_graph, masks_tracked, outdir=out_dir)
 
 def main():
     device = load_gpu(index=0)
 
-    run_trackastra_test(device)
+    run_trackastra_test(device=device, in_path="~/scratch/training", out_path="~/scratch/outputs/baseline1", dataset="Fluo-N2DL-HeLa")
 
 if __name__ == "__main__":
     main()
