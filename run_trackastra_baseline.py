@@ -2,12 +2,13 @@ import os
 import torch
 import numpy as np
 import tifffile
+import argparse
 from pathlib import Path
 
 from trackastra.model import Trackastra
 from trackastra.tracking import graph_to_ctc
 
-def load_gpu(index):
+def check_gpu(index):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(index)
 
     print("CUDA available:", torch.cuda.is_available())
@@ -24,7 +25,7 @@ def load_gpu(index):
 def run_trackastra_test(device, in_path, dataset, out_path):
 
     img_dir  = Path(in_path).expanduser() / dataset / "01"
-    mask_dir = Path(in_path).expanduser() / dataset / "01_GT" / "SEG"
+    mask_dir = Path(in_path).expanduser() / dataset / "01_ST" / "SEG"
 
     print(f"img_dir: {img_dir}\nmask_dir: {mask_dir}")
 
@@ -53,10 +54,25 @@ def run_trackastra_test(device, in_path, dataset, out_path):
 
     ctc_tracks, ctc_masks = graph_to_ctc(track_graph, masks_tracked, outdir=out_dir)
 
-def main():
-    device = load_gpu(index=0)
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run Trackastra on a CTC dataset.")
 
-    run_trackastra_test(device=device, in_path="~/scratch/training", out_path="~/scratch/outputs/baseline1", dataset="Fluo-N2DL-HeLa")
+    parser.add_argument("--in-path", type=str, required=True)
+
+    parser.add_argument("--out-path", type=str, required=True)
+
+    parser.add_argument("--dataset", type=str, required=True)
+
+    parser.add_argument("--gpu-index", type=int, required=True)
+
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+
+    device = check_gpu(index=args.gpu_index)
+
+    run_trackastra_test(device=device, in_path=args.in_path, out_path=args.out_path, dataset=args.dataset)
 
 if __name__ == "__main__":
     main()
