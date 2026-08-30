@@ -22,20 +22,16 @@ def check_gpu(index):
 
     return "cuda"
 
-def run_trackastra_test(device, in_path, dataset, out_path):
+def run_trackastra(device, in_path, dataset, out_path):
 
     img_dir  = Path(in_path).expanduser() / dataset / "01"
     mask_dir = Path(in_path).expanduser() / dataset / "01_ST" / "SEG"
-
-    print(f"img_dir: {img_dir}\nmask_dir: {mask_dir}")
 
     if not (img_dir.exists() and mask_dir.exists()):
         raise FileNotFoundError("Dataset folders could not be found.")
 
     out_dir = Path(out_path).expanduser() / dataset
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"output_dir: {out_dir}")
 
     img_files = sorted(img_dir.glob("*.tif"))
     mask_files = sorted(mask_dir.glob("*.tif"))
@@ -52,17 +48,13 @@ def run_trackastra_test(device, in_path, dataset, out_path):
 
     track_graph, masks_tracked = model.track(imgs, masks, mode="greedy")
 
-    ctc_tracks, ctc_masks = graph_to_ctc(track_graph, masks_tracked, outdir=out_dir)
+    graph_to_ctc(track_graph, masks_tracked, outdir=out_dir)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run Trackastra on a CTC dataset.")
-
     parser.add_argument("--in-path", type=str, required=True)
-
     parser.add_argument("--out-path", type=str, required=True)
-
     parser.add_argument("--dataset", type=str, required=True)
-
     parser.add_argument("--gpu-index", type=int, required=True)
 
     return parser.parse_args()
@@ -72,7 +64,7 @@ def main():
 
     device = check_gpu(index=args.gpu_index)
 
-    run_trackastra_test(device=device, in_path=args.in_path, out_path=args.out_path, dataset=args.dataset)
-
+    run_trackastra(device=device, in_path=args.in_path, out_path=args.out_path, dataset=args.dataset)
+    
 if __name__ == "__main__":
     main()
