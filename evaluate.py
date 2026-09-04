@@ -1,10 +1,12 @@
 import argparse
+import pprint
 from pathlib import Path
 
 from traccuracy import run_metrics
 from traccuracy.loaders import load_ctc_data
-from traccuracy.matchers import PointMatcher
-from traccuracy.metrics import DivisionMetrics, BasicMetrics
+from traccuracy.matchers import CTCMatcher
+from traccuracy.metrics import CTCMetrics
+
 
 def evaluate(gt_path, pred_path):
 
@@ -26,9 +28,8 @@ def evaluate(gt_path, pred_path):
     results, matched = run_metrics(
         gt_data=gt_data,
         pred_data=pred_data,
-        matcher=PointMatcher(threshold=0.5),
-        metrics=[DivisionMetrics(), BasicMetrics()]
-        )
+        matcher=CTCMatcher(),
+        metrics=[CTCMetrics()])
 
     return results, matched
 
@@ -42,7 +43,7 @@ def parse_args():
 def main():
     args = parse_args()
     results, matched = evaluate(args.gt_path, args.pred_path)
-    print(results)
+    pprint.pprint(results)
 
 if __name__ == "__main__":
     main()
