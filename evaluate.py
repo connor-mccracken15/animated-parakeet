@@ -1,13 +1,14 @@
 import argparse
 from pathlib import Path
 
+from traccuracy import run_metrics
 from traccuracy.loaders import load_ctc_data
 from traccuracy.matchers import PointMatcher
 from traccuracy.metrics import DivisionMetrics, BasicMetrics
 
-def evaluate(in_path, dataset, pred_path):
+def evaluate(gt_path, pred_path):
 
-    gt_dir = Path(in_path).expanduser() / dataset / "01_GT" / "TRA"
+    gt_dir = Path(gt_path).expanduser()
     gt_trk_dir = gt_dir / "man_track.txt"
 
     print(gt_dir)
@@ -17,15 +18,15 @@ def evaluate(in_path, dataset, pred_path):
 
     print("Loaded dataset")
 
-    pred_dir = str(Path(pred_path).expanduser() / dataset)
-    pred_trk_dir = str(pred_dir / "man_track.txt")
+    pred_dir = Path(pred_path).expanduser()
+    pred_trk_dir = pred_dir / "man_track.txt"
 
-    pred_data = load_ctc_data(pred_dir, pred_trk_dir, name="prediction")
+    pred_data = load_ctc_data(str(pred_dir), str(pred_trk_dir), name="prediction")
 
     results, matched = run_metrics(
         gt_data=gt_data,
         pred_data=pred_data,
-        matcher=PointMatcher(),
+        matcher=PointMatcher(threshold=0.5),
         metrics=[DivisionMetrics(), BasicMetrics()]
         )
 
@@ -40,3 +41,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+    results, matched = evaluate(args.gt_path, args.pred_path)
+    print(results)
+
+if __name__ == "__main__":
+    main()
