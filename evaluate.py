@@ -32,18 +32,3 @@ def evaluate(gt_path, pred_path):
         metrics=[CTCMetrics()])
 
     return results, matched
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Evaluate tracking dataset.")
-    parser.add_argument("--pred-path", type=str, required=True)
-    parser.add_argument("--gt-path", type=str, required=True)
-
-    return parser.parse_args()
-
-def main():
-    args = parse_args()
-    results, matched = evaluate(args.gt_path, args.pred_path)
-    pprint.pprint(results)
-
-if __name__ == "__main__":
-    main()

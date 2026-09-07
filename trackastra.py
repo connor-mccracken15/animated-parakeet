@@ -33,20 +33,3 @@ def run_trackastra(img_path, mask_path, out_path, mode):
     track_graph, masks_tracked = model.track(imgs, masks, mode)
 
     graph_to_ctc(track_graph, masks_tracked, outdir=out_dir)
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run Trackastra on a CTC dataset.")
-    parser.add_argument("--img-path", type=str, required=True)
-    parser.add_argument("--mask-path", type=str, required=True)
-    parser.add_argument("--out-path", type=str, required=True)
-    parser.add_argument("--mode", type=str, required=True)
-
-    return parser.parse_args()
-
-def main():
-    args = parse_args()
-    
-    run_trackastra(img_path=args.img_path, mask_path=args.mask_path, out_path=args.out_path, mode=args.mode)
-    
-if __name__ == "__main__":
-    main()

@@ -30,20 +30,4 @@ def run_napari(img_path, gt_path=None, pred_path=None):
         viewer.add_labels(pred_stack, name="pred masks")
 
     napari.run()
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="View tracking dataset.")
-    parser.add_argument("--img-path"), 
-    parser.add_argument("--gt-path", type=str, required=False),
-    parser.add_argument("--pred-path", type=str, required=False)
-
-    return parser.parse_args()
-
-def main():
-    args = parse_args()
-
-    run_napari(img_path=args.img_path, gt_path=args.gt_path, pred_path=args.pred_path)
-
-if __name__ == "__main__":
-    main()
     
