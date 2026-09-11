@@ -7,11 +7,10 @@ from traccuracy.loaders import load_ctc_data
 from traccuracy.matchers import CTCMatcher
 from traccuracy.metrics import CTCMetrics
 
-
 def evaluate(gt_path, pred_path):
 
     gt_dir = Path(gt_path).expanduser()
-    gt_trk_dir = gt_dir / "man_track.txt"
+    gt_trk_dir = gt_dir / "*_track.txt"
 
     print(gt_dir)
     print(gt_trk_dir)
