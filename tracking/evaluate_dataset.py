@@ -1,3 +1,7 @@
+"""
+Run basic evaluation of a datasets prediction mask/graph
+"""
+
 from pathlib import Path
 
 from traccuracy import run_metrics

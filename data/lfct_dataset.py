@@ -9,8 +9,8 @@ import numpy as np
 from traccuracy.loaders import load_ctc_data
 
 class LFCT_Dataset:
-    def __init__(self, in_path, gt_path=None, pred_path=None):
-        self.imgs = self._load_imgs(Path(in_path, "01_PC").expanduser())
+    def __init__(self, in_path=None, gt_path=None, pred_path=None):
+        self.imgs = self._load_imgs(Path(in_path, "01_PC").expanduser()) if in_path else None
 
         self.gt_dir = Path(gt_path, "01_GT", "TRA").expanduser() if gt_path else None
         self.pred_dir = Path(pred_path, "01_GT", "TRA").expanduser() if pred_path else None

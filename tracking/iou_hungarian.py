@@ -5,7 +5,7 @@ IoU + Hungarian linking between two label masks.
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
-def iou_matrix(mask_a, mask_b, labels_a, labels_b):
+def _iou_matrix(mask_a, mask_b, labels_a, labels_b):
 
     iou = np.zeros((len(labels_a), len(labels_b)))
 
@@ -19,7 +19,7 @@ def iou_matrix(mask_a, mask_b, labels_a, labels_b):
 
     return iou
 
-def link(mask_a, mask_b, iou_threshold=0.1):
+def _link(mask_a, mask_b, iou_threshold=0.1):
 
     labels_a = [n for n in np.unique(mask_a) if n != 0]
     labels_b = [n for n in np.unique(mask_b) if n != 0]
@@ -32,3 +32,8 @@ def link(mask_a, mask_b, iou_threshold=0.1):
     rows, cols = linear_sum_assignment(iou, maximize=True)
 
     return {int(labels_a[i]): int(labels_b[j]) for i, j in zip(rows, cols) if iou[i, j] >= iou_threshold}
+
+def run_iou_hungarian(dataset):
+
+    
+

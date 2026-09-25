@@ -1,5 +1,8 @@
+"""
+View dataset and assocaited masks in napari
+"""
+
 import napari
-from utils.lfct_dataset import LFCT_Dataset
 
 def view_dataset(dataset):
     viewer = napari.Viewer()
