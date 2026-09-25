@@ -1,19 +1,10 @@
-from utils.ctc_dataset import CTC_Dataset
 from pathlib import Path
-import utils.view_dataset as view_dataset
-import methods.iou_hungarian as iou
 
-dataset_name = "PhC-C2DL-PSC"
-root_path = "~/projects/dissertation/data/ctc"
-version = "02"
+from data.lfct_dataset import LFCT_Dataset
+from data.view_dataset import view_dataset
+from data.trackmate_to_ctc import trackmate_to_ctc
+from tracking.evaluate_dataset import evaluate_dataset
 
-print(Path(root_path, dataset_name, (version + "_GT"), "TRA", "man_track.txt"))
+dataset = LFCT_Dataset(in_path="~/projects/dissertation/data/lfct/MFC10A", gt_path="~/projects/dissertation/data/lfct/MFC10A", pred_path="~/projects/dissertation/data/lfct/MFC10A")
 
-ctc_test = CTC_Dataset(img_path=Path(root_path, dataset_name, version),
-                   seg_path=Path(root_path, dataset_name, (version + "_ST"), "SEG"), 
-                   trk_mask_gt_path = Path(root_path, dataset_name, (version + "_GT"), "TRA"),
-                   trk_graph_gt_path = Path(root_path, dataset_name, (version + "_GT"), "TRA", "man_track.txt"))
-
-
-
-view_dataset.view(ctc_test)
+results, matched = evaluate_dataset(dataset)
