@@ -20,4 +20,7 @@ def evaluate_dataset(dataset):
         metrics=[CTCMetrics()],
     )
 
-    return results, matched
+    for r in results:
+        print(r["metric"]["name"])
+        for name, value in r["results"].items():
+            print(f"  {name:<12} {value:.4g}")

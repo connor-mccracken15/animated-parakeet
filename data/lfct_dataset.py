@@ -13,7 +13,7 @@ class LFCT_Dataset:
         self.imgs = self._load_imgs(Path(in_path, "01_PC").expanduser()) if in_path else None
 
         self.gt_dir = Path(gt_path, "01_GT", "TRA").expanduser() if gt_path else None
-        self.pred_dir = Path(pred_path, "01_GT", "TRA").expanduser() if pred_path else None
+        self.pred_dir = Path(pred_path, "01_PRED", "TRA").expanduser() if pred_path else None
 
         self.gt_graph = self._load_graph(self.gt_dir / "track_ctc.txt") if gt_path else None
         self.gt_masks = self._load_masks(self.gt_dir) if gt_path else None
@@ -43,3 +43,11 @@ class LFCT_Dataset:
         data = np.loadtxt(in_dir)
 
         return data
+
+    def save_pred(self, pred_path):
+        self.pred_dir = Path(pred_path, "01_PRED", "TRA").expanduser()
+        self.pred_dir.mkdir(parents=True, exist_ok=True)
+
+        for t, mask in enumerate(self.pred_masks):
+            tifffile.imwrite(self.pred_dir / f"mask{t:03d}.tif", mask.astype(np.uint16))
+        np.savetxt(self.pred_dir / "track_ctc.txt", self.pred_graph, fmt="%d")
