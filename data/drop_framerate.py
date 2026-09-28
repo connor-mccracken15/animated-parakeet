@@ -2,12 +2,12 @@
 Creates new dataset with dropped frames, to simulate low frame rate. Also updates graph.
 """
 
-from data.lfct_dataset import LFCT_Dataset
+from data.dataset import LFCT_Dataset
 import numpy as np
 
-def _drop_frames(full_dataset, every_n):
+def _drop_frames(dataset, every_n):
     
-    return full_dataset.imgs[::every_n], full_dataset.gt_masks[::every_n]
+    return dataset.imgs[::every_n], dataset.gt_masks[::every_n]
 
 def _drop_graph(graph, n_frames, keep):
     new_idx = np.full(n_frames, -1)

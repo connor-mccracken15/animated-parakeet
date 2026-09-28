@@ -2,14 +2,10 @@
 Run basic evaluation of a datasets prediction mask/graph
 """
 
-from pathlib import Path
-
 from traccuracy import run_metrics
 from traccuracy.loaders import load_ctc_data
 from traccuracy.matchers import CTCMatcher
 from traccuracy.metrics import CTCMetrics
-
-from data.lfct_dataset import LFCT_Dataset
 
 def evaluate_dataset(dataset):
 
@@ -19,8 +15,3 @@ def evaluate_dataset(dataset):
         matcher=CTCMatcher(),
         metrics=[CTCMetrics()],
     )
-
-    for r in results:
-        print(r["metric"]["name"])
-        for name, value in r["results"].items():
-            print(f"  {name:<12} {value:.4g}")

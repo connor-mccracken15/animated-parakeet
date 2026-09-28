@@ -1,10 +1,14 @@
+"""
+Runs an experiment. Currently setup for testing only
+"""
+
 from pathlib import Path
 
-from data.lfct_dataset import LFCT_Dataset
-from data.view_dataset import view_dataset
-from data.create_lfr import create_lfr
+from data.dataset import LFCT_Dataset
+from visualisation.napari_view import view_dataset
+from data.drop_framerate import create_lfr
 
-from tracking.evaluate_dataset import evaluate_dataset
+from evaluation.metrics import evaluate_dataset
 from tracking.iou_hungarian import run_iou_hungarian
 
 tests = ["HEK293", "MDA-MB-231", "MFC10A", "U87"]
