@@ -4,6 +4,7 @@ Creates new dataset with dropped frames, to simulate low frame rate. Also update
 
 from data.dataset import LFCT_Dataset
 import numpy as np
+import copy
 
 def _drop_frames(dataset, every_n):
     
@@ -20,11 +21,16 @@ def _drop_graph(graph, n_frames, keep):
             rows.append([L, new_idx[frames[0]], new_idx[frames[-1]], P])
 
     rows = np.array(rows)
-    rows[~np.isin(rows[:, 3], rows[:, 0]), 3] = 0
+    labels = rows[:, 0]
+    parents = rows[:, 3]
+    parent_missing = ~np.isin(parents, labels)
+    rows[parent_missing, 3] = 0
+    
     return rows
 
 def create_lfr(dataset, every_n):
-    lfr_dataset = LFCT_Dataset()
+    lfr_dataset = copy.deepcopy(dataset)
+
     n_frames = dataset.imgs.shape[0]
     keep = np.arange(0, n_frames, every_n)
 

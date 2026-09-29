@@ -5,12 +5,12 @@ Converts LFCT dataset graph from Trackmate format (xml) to CTC friendly format (
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import numpy as np
-import tifffile
 from skimage.draw import disk
+import copy
 
 # Load spots and the links between them
-def _read_trackmate(xml_path):
-    root = ET.parse(xml_path).getroot()
+def _read_trackmate(xml):
+    root = xml.getroot()
     pixel_size = float(root.find('.//ImageData').get('pixelwidth', 1))
 
     spots = {}
@@ -64,21 +64,18 @@ def _draw_masks(spots, labels, n_frames, height, width):
     return masks
 
 # Run conversion
-def trackmate_to_ctc(in_path):
+def create_ctc(dataset):
+    ctc_dataset = copy.deepcopy(dataset)
 
-    gt_dir = Path(in_path, '01_GT', 'TRA').expanduser()
-    img_dir = Path(in_path, '01_PC').expanduser()
-    
-    images = sorted(img_dir.glob('*.tif'))
-    height, width = tifffile.imread(images[0]).shape[:2]
+    imgs = dataset.imgs
+    gt_graph_tm = dataset.gt_graph_tm
+    height, width = imgs[0].shape[:2]
 
-    spots, children = _read_trackmate(gt_dir / 'tracking_trackmate.xml')
+    spots, children = _read_trackmate(gt_graph_tm)
     labels, tracklets = _split_into_tracklets(spots, children)
-    masks = _draw_masks(spots, labels, len(images), height, width)
+    masks = _draw_masks(spots, labels, len(imgs), height, width)
 
-    for t, mask in enumerate(masks):
-        tifffile.imwrite(mask, gt_dir / f'track{t:04d}.tif')
+    ctc_dataset.gt_masks = masks
+    ctc_dataset.gt_graph = np.array(tracklets)
 
-    with open(gt_dir / 'track_ctc.txt', 'w') as f:
-        for tracklet in tracklets:
-            f.write(' '.join(map(str, tracklet)) + '\n')
+    return ctc_dataset
