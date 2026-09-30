@@ -2,7 +2,6 @@
 Creates new dataset with dropped frames, to simulate low frame rate. Also updates graph.
 """
 
-from data.dataset import LFCT_Dataset
 import numpy as np
 import copy
 

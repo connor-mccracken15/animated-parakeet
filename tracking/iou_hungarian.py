@@ -55,6 +55,7 @@ def run_iou_hungarian(dataset, iou_threshold=0.1):
                 tid = next_id
                 next_id += 1
                 tracks[tid] = [t, t]
+                
             cur_map[label] = tid
             pred[t][masks[t] == label] = tid
 

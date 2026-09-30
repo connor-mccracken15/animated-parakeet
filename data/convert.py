@@ -58,7 +58,7 @@ def _draw_masks(spots, labels, n_frames, height, width):
 
     masks = np.zeros((n_frames, height, width), np.uint16)
     for spot_id, s in spots.items():
-        rows, cols = disk((s['y'], s['x']), 10, shape=(height, width))
+        rows, cols = disk((s['y'], s['x']), 3, shape=(height, width))
         masks[s['frame'], rows, cols] = labels[spot_id]
         
     return masks

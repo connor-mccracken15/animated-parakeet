@@ -21,12 +21,13 @@ import xml.etree.ElementTree as ET
 
 # Class holds images and directories
 class LFCT_Dataset:
-    def __init__(self, img_path=None, gt_path=None, pred_path=None):
+    def __init__(self, img_path=None, gt_path=None, pred_path=None, seg_path=None):
         self.img_dir = Path(img_path).expanduser() if img_path else None
         self.imgs = self._load_imgs(self.img_dir) if img_path else None
 
         self.gt_dir = Path(gt_path).expanduser() if gt_path else None
         self.pred_dir = Path(pred_path).expanduser() if pred_path else None
+        self.seg_dir = Path(seg_path).expanduser() if seg_path else None
 
         self.gt_graph = self._load_graph_ctc(self.gt_dir / "man_track.txt") if gt_path else None
         self.gt_masks = self._load_masks(self.gt_dir) if gt_path else None
@@ -35,6 +36,8 @@ class LFCT_Dataset:
         self.pred_masks = self._load_masks(self.pred_dir) if pred_path else None
 
         self.gt_graph_tm = self._load_graph_tm(self.gt_dir / "man_track.xml") if gt_path else None
+
+        self.masks_seg = self._load_masks(self.seg_dir) if seg_path else None
 
     def _load_imgs(self, in_dir):
         in_files = sorted(in_dir.glob("*.tif"))
@@ -77,3 +80,7 @@ class LFCT_Dataset:
     def save_imgs(self):
         for t, img in enumerate(self.imgs):
             tifffile.imwrite(self.img_dir / f"pc_{t:04d}.tif", img)
+
+    def save_seg(self):
+        for t, img in enumerate(self.masks_seg):
+            tifffile.imwrite(self.seg_dir / f"seg_{t:04d}.tif", img)
