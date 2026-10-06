@@ -21,9 +21,12 @@ import xml.etree.ElementTree as ET
 
 # Class holds images and directories
 class Dataset:
-    def __init__(self, img_path=None, gt_path=None, pred_path=None, seg_path=None):
-        self.img_dir = Path(img_path).expanduser() if img_path else None
-        self.imgs = self._load_imgs(self.img_dir) if img_path else None
+    def __init__(self, pc_path=None, rfp_path=None, gt_path=None, pred_path=None, seg_path=None):
+        self.pc_dir = Path(pc_path).expanduser() if pc_path else None
+        self.pc = self._load_imgs(self.pc_dir) if pc_path else None
+
+        self.rfp_dir = Path(rfp_path).expanduser() if rfp_path else None
+        self.rfp = self._load_imgs(self.rfp_dir) if rfp_path else None
 
         self.gt_dir = Path(gt_path).expanduser() if gt_path else None
         self.pred_dir = Path(pred_path).expanduser() if pred_path else None
@@ -71,10 +74,15 @@ class Dataset:
 
         np.savetxt(self.gt_dir / "man_track.txt", self.gt_graph, fmt="%d")
 
-    def save_imgs(self):
-        self.img_dir.mkdir(parents=True, exist_ok=True)
-        for t, img in enumerate(self.imgs):
-            tifffile.imwrite(self.img_dir / f"pc_{t:04d}.tif", img)
+    def save_pc(self):
+        self.pc_dir.mkdir(parents=True, exist_ok=True)
+        for t, img in enumerate(self.pc):
+            tifffile.imwrite(self.pc_dir / f"pc_{t:04d}.tif", img)
+
+    def save_rfp(self):
+        self.rfp_dir.mkdir(parents=True, exist_ok=True)
+        for t, img in enumerate(self.rfp):
+            tifffile.imwrite(self.rfp_dir / f"rfp_{t:04d}.tif", img)
 
     def save_seg(self):
         self.seg_dir_dir.mkdir(parents=True, exist_ok=True)

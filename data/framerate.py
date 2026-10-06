@@ -5,10 +5,6 @@ Creates new dataset with dropped frames, to simulate low frame rate. Also update
 import numpy as np
 import copy
 
-def _drop_frames(dataset, every_n):
-    
-    return dataset.imgs[::every_n], dataset.gt_masks[::every_n]
-
 def _drop_graph(graph, n_frames, keep):
     new_idx = np.full(n_frames, -1)
     new_idx[keep] = np.arange(len(keep))
@@ -30,10 +26,13 @@ def _drop_graph(graph, n_frames, keep):
 def create_lfr(dataset, every_n):
     lfr_dataset = copy.deepcopy(dataset)
 
-    n_frames = dataset.imgs.shape[0]
+    n_frames = dataset.pc.shape[0]
     keep = np.arange(0, n_frames, every_n)
 
-    lfr_dataset.imgs, lfr_dataset.gt_masks = _drop_frames(dataset, every_n)
+    lfr_dataset.pc = dataset.pc[::every_n]
+    lfr_dataset.rfp = dataset.rfp[::every_n]
+    lfr_dataset.gt_masks = dataset.gt_masks[::every_n]
+
     lfr_dataset.gt_graph = _drop_graph(dataset.gt_graph, n_frames, keep)
 
     return lfr_dataset

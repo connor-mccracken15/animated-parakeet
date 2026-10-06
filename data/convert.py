@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 from skimage.draw import disk
 import copy
+from skimage.draw import disk, polygon
 
 # Load spots and the links between them
 def _read_trackmate(xml):
@@ -71,11 +72,11 @@ def _draw_masks(spots, labels, n_frames, height, width):
     return masks
 
 # Run conversion
-def create_ctc(imgs, xml_path):
-    height, width = imgs[0].shape[:2]
+def create_ctc(pc, xml_path):
+    height, width = pc[0].shape[:2]
 
     spots, children = _read_trackmate(ET.parse(xml_path))
     labels, tracklets = _split_into_tracklets(spots, children)
-    masks = _draw_masks(spots, labels, len(imgs), height, width)
+    masks = _draw_masks(spots, labels, len(pc), height, width)
 
     return masks, np.array(tracklets)

@@ -14,7 +14,8 @@ def _to_tracks(masks, graph):
 
 def view_dataset(dataset):
     viewer = napari.Viewer()
-    viewer.add_image(dataset.imgs, name="video")
+    viewer.add_image(dataset.pc, name="pc")
+    viewer.add_image(dataset.rfp, name="rfp")
 
     for name, masks, graph in [("gt", dataset.gt_masks, dataset.gt_graph),
                                ("pred", dataset.pred_masks, dataset.pred_graph),

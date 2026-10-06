@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 
 from data.dataset import Dataset
 from evaluation.metrics import evaluate_dataset
+
 from tracking.distance_hungarian import run_distance_hungarian
+from tracking.btrack import run_btrack
 
 TYPES = ["HEK293", "MDA-MB-231", "MFC10A", "U87"]
 N_FRAMES = [1, 2, 4, 8, 16, 32]
@@ -25,7 +27,7 @@ for t in TYPES:
         d = in_path / t
         dataset = Dataset(img_path=d / f"{n:02d}_PC", gt_path=d / f"{n:02d}_GT", pred_path=d / f"{n:02d}_PRED")
 
-        dataset.pred_masks, dataset.pred_graph = run_distance_hungarian(dataset)
+        dataset.pred_masks, dataset.pred_graph = run_btrack(dataset)
         dataset.save_pred()
 
         f1[t].append(edge_f1(evaluate_dataset(dataset)))
