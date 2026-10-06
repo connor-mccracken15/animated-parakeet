@@ -20,7 +20,7 @@ import os.path
 import xml.etree.ElementTree as ET
 
 # Class holds images and directories
-class LFCT_Dataset:
+class Dataset:
     def __init__(self, img_path=None, gt_path=None, pred_path=None, seg_path=None):
         self.img_dir = Path(img_path).expanduser() if img_path else None
         self.imgs = self._load_imgs(self.img_dir) if img_path else None
@@ -34,8 +34,6 @@ class LFCT_Dataset:
 
         self.pred_graph = self._load_graph_ctc(self.pred_dir / "man_track.txt") if pred_path else None
         self.pred_masks = self._load_masks(self.pred_dir) if pred_path else None
-
-        self.gt_graph_tm = self._load_graph_tm(self.gt_dir / "man_track.xml") if gt_path else None
 
         self.masks_seg = self._load_masks(self.seg_dir) if seg_path else None
 
@@ -56,12 +54,6 @@ class LFCT_Dataset:
     def _load_graph_ctc(self, in_dir):
         if os.path.isfile(in_dir):
             return np.loadtxt(in_dir)
-
-        return None
-
-    def _load_graph_tm(self, in_dir):
-        if os.path.isfile(in_dir):
-            return ET.parse(in_dir)
 
         return None
 
