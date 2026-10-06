@@ -58,21 +58,25 @@ class Dataset:
         return None
 
     def save_pred(self):
+        self.pred_dir.mkdir(parents=True, exist_ok=True)
         for t, mask in enumerate(self.pred_masks):
             tifffile.imwrite(self.pred_dir / f"mask_{t:04d}.tif", mask.astype(np.uint16))
 
         np.savetxt(self.pred_dir / "man_track.txt", self.pred_graph, fmt="%d")
 
     def save_gt(self):
+        self.gt_dir.mkdir(parents=True, exist_ok=True)
         for t, mask in enumerate(self.gt_masks):
             tifffile.imwrite(self.gt_dir / f"mask_{t:04d}.tif", mask.astype(np.uint16))
 
         np.savetxt(self.gt_dir / "man_track.txt", self.gt_graph, fmt="%d")
 
     def save_imgs(self):
+        self.img_dir.mkdir(parents=True, exist_ok=True)
         for t, img in enumerate(self.imgs):
             tifffile.imwrite(self.img_dir / f"pc_{t:04d}.tif", img)
 
     def save_seg(self):
+        self.seg_dir_dir.mkdir(parents=True, exist_ok=True)
         for t, img in enumerate(self.masks_seg):
             tifffile.imwrite(self.seg_dir / f"seg_{t:04d}.tif", img)

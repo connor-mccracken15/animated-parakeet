@@ -1,33 +1,42 @@
 """
-Runs an experiment. Currently setup for testing only
+Runs distance-Hungarian on all cell types and frame rates, plots edge F1
 """
 
 from pathlib import Path
-from pprint import pprint
+
+import matplotlib.pyplot as plt
 
 from data.dataset import Dataset
-from data.drop_framerate import create_lfr
-from data.segmentation import run_cellpose
-
 from evaluation.metrics import evaluate_dataset
-from tracking.iou_hungarian import run_iou_hungarian
-
-from visualisation.napari_view import view_dataset
+from tracking.distance_hungarian import run_distance_hungarian
 
 TYPES = ["HEK293", "MDA-MB-231", "MFC10A", "U87"]
-N_FRAMES = [2, 4, 8, 16, 32]
+N_FRAMES = [1, 2, 4, 8, 16, 32]
 
 in_path = Path("~/projects/dissertation/data/lfct").expanduser()
 
-type = "U87"
-n_frames = "01"
+def edge_f1(results):
+    return next(r["results"]["Edge F1"] for r in results if r["metric"]["name"] == "BasicMetrics")
 
-dataset = Dataset(img_path = in_path / type / f"{n_frames}_PC",  
-                       gt_path = in_path / type / f"{n_frames}_GT", 
-                       pred_path = in_path / type / f"{n_frames}_GT")
+f1 = {t: [] for t in TYPES}
 
-results = evaluate_dataset(dataset)
+for t in TYPES:
+    for n in N_FRAMES:
+        d = in_path / t
+        dataset = Dataset(img_path=d / f"{n:02d}_PC", gt_path=d / f"{n:02d}_GT", pred_path=d / f"{n:02d}_PRED")
 
-for r in results:
-    print(r["metric"]["name"])
-    pprint(r["results"])
+        dataset.pred_masks, dataset.pred_graph = run_distance_hungarian(dataset)
+        dataset.save_pred()
+
+        f1[t].append(edge_f1(evaluate_dataset(dataset)))
+        print(t, n, f1[t][-1])
+
+for t in TYPES:
+    plt.plot(N_FRAMES, f1[t], marker="o", label=t)
+
+plt.xscale("log", base=2)
+plt.xticks(N_FRAMES, N_FRAMES)
+plt.xlabel("Frame step (every nth frame)")
+plt.ylabel("Edge F1")
+plt.legend()
+plt.show()

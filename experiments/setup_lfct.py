@@ -24,8 +24,7 @@ def main():
             dropped = create_lfr(dataset, n)
 
             dirs = [in_path / t / f"{n:02d}_{s}" for s in ("PC", "GT", "PRED")]
-            for d in dirs:
-                d.mkdir(parents=True, exist_ok=True)
+
             dropped.img_dir, dropped.gt_dir, dropped.pred_dir = dirs
 
             dropped.save_gt()

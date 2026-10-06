@@ -59,7 +59,6 @@ def _split_into_tracklets(spots, children):
     return labels, tracklets
 
 # Paint each spot as a disc with its label
-# Paint each spot as a disc with its label
 def _draw_masks(spots, labels, n_frames, height, width):
 
     masks = np.zeros((n_frames, height, width), np.uint16)
