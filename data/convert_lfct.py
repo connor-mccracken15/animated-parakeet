@@ -31,7 +31,7 @@ def _read_trackmate(xml):
 
     return spots, children
 
-# Label each spot, new label starts after every division
+# Label each spot, new label starts after every division, gap or merge
 def _split_into_tracklets(spots, children):
     has_parent = {c for kids in children.values() for c in kids}
     to_visit = [(s, 0) for s in spots if s not in has_parent]
@@ -39,12 +39,17 @@ def _split_into_tracklets(spots, children):
 
     while to_visit:
         spot, parent = to_visit.pop()
+        if spot in labels:  # already reached via another parent (merge)
+            continue
+
         label = len(tracklets) + 1
         start = spots[spot]['frame']
 
-        # follow the cell until it divides or ends
+        # follow the cell until it divides, skips a frame, merges or ends
         labels[spot] = label
-        while len(children[spot]) == 1:
+        while (len(children[spot]) == 1
+               and children[spot][0] not in labels
+               and spots[children[spot][0]]['frame'] == spots[spot]['frame'] + 1):
             spot = children[spot][0]
             labels[spot] = label
 
@@ -54,13 +59,16 @@ def _split_into_tracklets(spots, children):
     return labels, tracklets
 
 # Paint each spot as a disc with its label
+# Paint each spot as a disc with its label
 def _draw_masks(spots, labels, n_frames, height, width):
 
     masks = np.zeros((n_frames, height, width), np.uint16)
     for spot_id, s in spots.items():
-        rows, cols = disk((s['y'], s['x']), 3, shape=(height, width))
+        y = np.clip(s['y'], 0, height - 1)  # keep edge spots inside the image
+        x = np.clip(s['x'], 0, width - 1)
+        rows, cols = disk((y, x), 3, shape=(height, width))
         masks[s['frame'], rows, cols] = labels[spot_id]
-        
+
     return masks
 
 # Run conversion

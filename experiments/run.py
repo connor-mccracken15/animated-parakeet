@@ -3,6 +3,7 @@ Runs an experiment. Currently setup for testing only
 """
 
 from pathlib import Path
+from pprint import pprint
 
 from data.dataset import Dataset
 from data.drop_framerate import create_lfr
@@ -21,18 +22,12 @@ in_path = Path("~/projects/dissertation/data/lfct").expanduser()
 type = "U87"
 n_frames = "01"
 
-dataset_lfct = Dataset(img_path = in_path / type / f"{n_frames}_PC",  
+dataset = Dataset(img_path = in_path / type / f"{n_frames}_PC",  
                        gt_path = in_path / type / f"{n_frames}_GT", 
-                       pred_path = in_path / type / f"{n_frames}_PRED",
-                       seg_path = in_path / type / f"{n_frames}_SEG")
+                       pred_path = in_path / type / f"{n_frames}_GT")
 
+results = evaluate_dataset(dataset)
 
-in_path = Path("~/projects/dissertation/data/deepcell/train").expanduser()
-
-type = "020"
-
-dataset_dc = Dataset(img_path = in_path / type / "01",  
-                       gt_path = in_path / type / "01_GT", 
-                       pred_path = in_path / type / "01_PRED")
-
-view_dataset(dataset_dc)
+for r in results:
+    print(r["metric"]["name"])
+    pprint(r["results"])
