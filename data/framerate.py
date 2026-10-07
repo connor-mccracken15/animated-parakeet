@@ -23,7 +23,7 @@ def _drop_graph(graph, n_frames, keep):
     
     return rows
 
-def create_lfr(dataset, every_n):
+def create_lfr_dataset(dataset, every_n):
     lfr_dataset = copy.deepcopy(dataset)
 
     n_frames = dataset.pc.shape[0]
@@ -32,6 +32,7 @@ def create_lfr(dataset, every_n):
     lfr_dataset.pc = dataset.pc[::every_n]
     lfr_dataset.rfp = dataset.rfp[::every_n]
     lfr_dataset.gt_masks = dataset.gt_masks[::every_n]
+    lfr_dataset.seg_masks = dataset.seg_masks[::every_n]
 
     lfr_dataset.gt_graph = _drop_graph(dataset.gt_graph, n_frames, keep)
 

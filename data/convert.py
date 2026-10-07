@@ -72,7 +72,7 @@ def _draw_masks(spots, labels, n_frames, height, width):
     return masks
 
 # Run conversion
-def create_ctc(pc, xml_path):
+def convert_to_ctc(pc, xml_path):
     height, width = pc[0].shape[:2]
 
     spots, children = _read_trackmate(ET.parse(xml_path))

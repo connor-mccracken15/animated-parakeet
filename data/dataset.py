@@ -38,7 +38,7 @@ class Dataset:
         self.pred_graph = self._load_graph_ctc(self.pred_dir / "man_track.txt") if pred_path else None
         self.pred_masks = self._load_masks(self.pred_dir) if pred_path else None
 
-        self.masks_seg = self._load_masks(self.seg_dir) if seg_path else None
+        self.seg_masks = self._load_masks(self.seg_dir) if seg_path else None
 
     def _load_imgs(self, in_dir):
         in_files = sorted(in_dir.glob("*.tif"))
@@ -85,6 +85,6 @@ class Dataset:
             tifffile.imwrite(self.rfp_dir / f"rfp_{t:04d}.tif", img)
 
     def save_seg(self):
-        self.seg_dir_dir.mkdir(parents=True, exist_ok=True)
-        for t, img in enumerate(self.masks_seg):
+        self.seg_dir.mkdir(parents=True, exist_ok=True)
+        for t, img in enumerate(self.seg_masks):
             tifffile.imwrite(self.seg_dir / f"seg_{t:04d}.tif", img)
