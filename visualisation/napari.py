@@ -14,12 +14,18 @@ def _to_tracks(masks, graph):
 
 def view_dataset(dataset):
     viewer = napari.Viewer()
-    viewer.add_image(dataset.pc, name="pc")
-    viewer.add_image(dataset.rfp, name="rfp")
+
+    for name, imgs in [("pc", dataset.pc),
+                       ("pc", dataset.rfp)]:
+
+        if imgs is None:
+            continue
+
+        viewer.add_image(imgs, name={name})
 
     for name, masks, graph in [("gt", dataset.gt_masks, dataset.gt_graph),
                                ("pred", dataset.pred_masks, dataset.pred_graph),
-                               ("seg", dataset.masks_seg, None)]:
+                               ("seg", dataset.seg_masks, None)]:
         if masks is None:
             continue
 

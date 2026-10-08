@@ -11,7 +11,7 @@ from skimage.segmentation import watershed
 
 def run_cellpose(ims, markers, prob_thresh=0.0):
     model = models.CellposeModel(
-        pretrained_model="cpsam_v2",
+        pretrained_model="cyto3",
         gpu=True,
         device=torch.device("cuda:1"),
     )
